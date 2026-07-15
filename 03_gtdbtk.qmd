@@ -19,7 +19,7 @@ first construct a while loop
 ```bash
 while read bin;do echo $bin;done < ../checkm/bbd_topbins.txt
 ```
-for every bin we need to prepend the path to its folder ../metabat/bins_bbd/ and then append the file extension .fa with the following command
+for every bin we need to prepend the path to its folder ../metabat/bins_bbd/ and then append the file extension .fa with the following command contig 115 had to be copied manually
 ```bash
 while read bin;do echo "../metabat/bins_bbd/${bin}.fa";done < ../checkm/bbd_topbins.txt
 ```
