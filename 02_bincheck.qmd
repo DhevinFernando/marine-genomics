@@ -1,0 +1,42 @@
+---
+title: "Bin selection"
+author: "Dhevin Fernando"
+format: html
+editor: visual
+---
+
+## Select bins based on checkm results
+channge directory to checkm folder
+
+```bash
+cd checkm
+```
+view the checkm_results_bbd.txt file
+
+```bash
+head checkm_results_bbd.txt 
+```
+show more lines with
+
+```bash
+head -n 20 checkm_results_bbd.txt 
+```
+I am now going to extract the bins with a completeness greater than 15%
+
+this command will printn the lines where the 13th column has a value greater than 15
+
+```bash
+cat checkm_results_bbd.txt | awk '$13>15'
+```
+lets extract the bin IDs for this selection with the following command
+
+```bash
+cat checkm_results_bbd.txt | awk '$13>15{print $1}'
+```
+this extraction will then be output to a file
+
+```bash
+cat checkm_results_bbd.txt | awk '$13>15{print $1}' > bbd_topbins.txt
+```
+
+

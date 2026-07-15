@@ -21,18 +21,18 @@ to identify the longest contig in the assembly we run the following command whic
 cat ../flye/bbd/assembly.fasta | bioawk -c fastx '{print length($seq),$name}' | sort -n
 ```
 
-now we manually add the largest contig to checkm
+now we manually add the largest contig (contig_115) to checkm
 ```bash
 mkdir bins_bbd
 cp ../metabat/bins_bbd/*.fa bins_bbd/
-samtools faidx ../flye/bbd/assembly.fasta contig_XX > bins_bbd/contig_XX.fa
+samtools faidx ../flye/bbd/assembly.fasta contig_115 > bins_bbd/contig_115.fa
 ```
 
 we then create a new shell slurm script with the following code (run_checkm_bbd.sh) and run it to submit a checkm job:
 ```bash
 #!/bin/bash
 #SBATCH --time=60
-#SBATCH --ntasks=6 --mem=10gb
+#SBATCH --ntasks=6 --mem=40gb
 
 echo "Starting checkm in $(pwd) at $(date)"
 
