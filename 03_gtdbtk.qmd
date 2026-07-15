@@ -1,0 +1,56 @@
+---
+title: "GTDBTK"
+author: "Dhevin Fernando"
+format: html
+editor: visual
+---
+
+## **Perform taxonomic classification with gtdbtk**
+create a directory for gtdbtk and create a directory called genomes within it
+```bash
+mkdir gtdbtk
+cd gtdbtk
+mkdir genomes
+```
+
+this command will copy a file corresponding to each bin for each of the top bins into the genomes folder
+
+first construct a while loop
+```bash
+while read bin;do echo $bin;done < ../checkm/bbd_topbins.txt
+```
+for every bin we need to prepend the path to its folder ../metabat/bins_bbd/ and then append the file extension .fa with the following command
+```bash
+while read bin;do echo "../metabat/bins_bbd/${bin}.fa";done < ../checkm/bbd_topbins.txt
+```
+now we copy
+```bash
+while read bin;do cp "../metabat/bins_bbd/${bin}.fa" genomes;done < ../checkm/bbd_topbins.txt
+```
+check whether it worked
+
+```bash
+ls genomes
+```
+
+create a slurm shell file within gtdbtk directory
+```bash
+#!/bin/bash
+#SBATCH --time=60
+#SBATCH --ntasks=2 --mem=40gb
+
+echo "Starting gtdbtk in $(pwd) at $(date)"
+
+shopt -s expand_aliases
+alias gtdbtk='apptainer run -B /pvol:/pvol,/pvol/data/mg/gtdbtkdata/release207_v2/:/refdata /pvol/data/sif/gtdbtk.sif'
+
+gtdbtk classify_wf -x fa --cpus 2 --genome_dir genomes --out_dir out --skip_ani_screen
+
+echo "Finished gtdbtk in $(pwd) at $(date)"
+
+```
+and then submit a job
+
+```bash
+sbatch run_gtdbtk.sh
+```

@@ -1,0 +1,55 @@
+---
+title: "Find and annotate genes with prokka"
+author: "Dhevin Fernando"
+format: html
+editor: visual
+---
+
+## Prokka
+create and shift to directory for prokka from top level
+```bash
+mkdir prokka
+cd prokka
+```
+find first bin id
+```bash
+head -n 1 ../checkm/bbd_topbins.txt
+```
+run prokka for single bin
+
+```bash
+bin=metabat.X
+prokka --outdir $bin --prefix $bin  ../metabat/bins_bbd/${bin}.fa
+```
+
+list folder contents
+```bash
+ls metabat.x
+```
+list folder outputs here:
+```bash
+
+```
+
+now run prokka for all genomes with the following slurm script (run_prokka.sh)
+```
+#!/bin/bash
+#SBATCH --time=60
+#SBATCH --ntasks=2 --mem=2gb
+
+echo "Starting prokka in $(pwd) at $(date)"
+
+shopt -s expand_aliases
+alias prokka='apptainer run -B /pvol/:/pvol /pvol/data/sif/prokka.sif prokka'
+
+while read bin;do 
+  prokka --outdir $bin --prefix $bin "../metabat/bins_bbd/${bin}.fa";
+done < ../checkm/bbd_topbins.txt
+
+echo "Finished prokka in $(pwd) at $(date)"
+```
+and run it
+
+```bash
+sbatch run_prokka.sh
+```
