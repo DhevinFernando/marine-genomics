@@ -5,23 +5,46 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Checkm
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+cd to my top level for the project
+```bash
+cd ~/marine-genomics
+```
+make and change to a checkm directory
+```bash
+mkdir checkm
+cd checkm
+```
+to identify the longest contig in the assembly we run the following command which orders them from shortest to longest:
+```bash
+cat ../flye/bbd/assembly.fasta | bioawk -c fastx '{print length($seq),$name}' | sort -n
 ```
 
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
+now we manually add the largest contig to checkm
+```bash
+mkdir bins_bbd
+cp ../metabat/bins_bbd/*.fa bins_bbd/
+samtools faidx ../flye/bbd/assembly.fasta contig_XX > bins_bbd/contig_XX.fa
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+we then create a new shell slurm script with the following code (run_checkm_bbd.sh) and run it to submit a checkm job:
+```bash
+#!/bin/bash
+#SBATCH --time=60
+#SBATCH --ntasks=6 --mem=10gb
+
+echo "Starting checkm in $(pwd) at $(date)"
+
+shopt -s expand_aliases
+alias checkm='apptainer run -B /pvol/:/pvol /pvol/data/sif/checkm.sif checkm'
+
+checkm lineage_wf bins_bbd out -t 4 -x fa -f checkm_results_bbd.txt
+
+echo "Finished checkm in $(pwd) at $(date)"
+```
+
+the job is then submitted with the following command
+```bash
+sbatch run_checkm_bbd.sh
+```

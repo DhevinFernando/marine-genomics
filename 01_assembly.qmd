@@ -5,23 +5,37 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Assembly
+first i created two directories within my project, flye and raw_data and changed my working directory to raw_data
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+``` bash
+mkdir flye
+mkdir raw_data
+cd raw_data
 ```
 
-You can add options to executable code like this
+i then created a symbolic link to the black band disease genome read data
 
-```{r}
-#| echo: false
-2 * 2
+``` bash
+ln -s /pvol/data/metagenome_assembly/bbd_0.1.fastq.gz .
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+i then changed the working directory to flye and ran a shell slurm script (run_flye_bbd.sh) with the following code to assemble the black band disease genome:
+
+``` bash
+#!/bin/bash
+#SBATCH --time=720
+#SBATCH --ntasks=12 --mem=10gb
+
+echo "Starting flye bbd in $(pwd) at $(date)"
+
+flye --nano-hq ../raw_data/bbd_0.1.fastq.gz --threads 12 --out-dir bbd --meta
+
+echo "Finished flye bbd in $(pwd) at $(date)"
+```
+
+``` bash
+cd ..
+cd flye
+sbatch run_flye_bbd.sh
+```

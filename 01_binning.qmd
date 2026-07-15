@@ -5,23 +5,27 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+## Binning
+first i changed directory to the top level of my project
+```bash
+cd ~/marine-genomics
 ```
 
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
+then i created and changed into a metabat directory
+```bash
+mkdir metabat
+cd metabat
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+i then extracted the depth info 
+```bash
+cat ../flye/bbd/assembly_info.txt  | grep -v '#' | awk '{OFS="\t";print $1,$3}' > depths_bbd.txt
+```
+ and reordered the contigs based on their depth with the command
+ ```bash
+ cat depths_bbd.txt | awk '{print $1}' | xargs samtools faidx ../flye/bbd/assembly.fasta > assembly_bbd_ordered.fasta
+ ```
+ i then ran metabat with the following command
+ ```bash
+ metabat2 -i assembly_bbd_ordered.fasta -a depths_bbd.txt --cvExt -o bins_bbd/metabat --seed 5
+ ```
