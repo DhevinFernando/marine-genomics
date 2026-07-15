@@ -18,17 +18,17 @@ head -n 1 ../checkm/bbd_topbins.txt
 run prokka for single bin
 
 ```bash
-bin=metabat.X
+bin=contig_115
 prokka --outdir $bin --prefix $bin  ../metabat/bins_bbd/${bin}.fa
 ```
 
 list folder contents
 ```bash
-ls metabat.x
+ls contig_115
 ```
 list folder outputs here:
 ```bash
-
+contig_115.err  contig_115.faa  contig_115.ffn  contig_115.fna  contig_115.fsa  contig_115.gbk  contig_115.gff  contig_115.log  contig_115.sqn  contig_115.tbl  contig_115.tsv  contig_115.txt
 ```
 
 now run prokka for all genomes with the following slurm script (run_prokka.sh)
