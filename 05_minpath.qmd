@@ -1,0 +1,132 @@
+---
+title: "Infer metabolic pathways"
+author: "Dhevin Fernando"
+format: html
+editor: visual
+---
+
+## **Infer metabolic pathways**
+first we create a directory from top level directory for the minpath program which will help us to infer biological pathways and shift into it 
+```bash
+mkdir minpath
+cd minpath
+```
+
+show the first ten rows (first 9 genes) of the contig_115.tsv file produced by prokka, contig_115 was chosen in this case since it was the first value in my list
+```bash
+head ../prokka/contig_115/contig_115.tsv
+```
+output:
+```bash
+locus_tag       ftype   length_bp       gene    EC_number       COG     product
+FIPIGDJI_00001  CDS     1530                            hypothetical protein
+FIPIGDJI_00002  CDS     255                             hypothetical protein
+FIPIGDJI_00003  CDS     306                             hypothetical protein
+FIPIGDJI_00004  CDS     105                             hypothetical protein
+FIPIGDJI_00005  CDS     1515                            hypothetical protein
+FIPIGDJI_00006  CDS     4083                            hypothetical protein
+FIPIGDJI_00007  CDS     780             2.5.1.41        COG1646 Geranylgeranylglyceryl phosphate synthase
+FIPIGDJI_00008  CDS     453                             hypothetical protein
+FIPIGDJI_00009  CDS     366                             hypothetical protein
+```
+in order to isolate the unique ID and EC number of each gene we will transform the tsv using an awk command ,-F '\t' is included to indicate the file is tab seperated
+```bash
+head ../prokka/contig_115/contig_115.tsv | awk -F '\t' '{print $1,$5}'
+```
+we will then further filter this output so that only entries with an EC_number remain
+```bash
+head ../prokka/contig_115/contig_115.tsv | awk -F '\t' '$5{print $1,$5}'
+```
+we now remove the header line and ensure the file is still tab seperated with
+```bash
+head ../prokka/contig_115/contig_115.tsv | awk -F '\t' '$5{OFS="\t";print $1,$5}' | grep -v '^locus'
+```
+since the previous code only applies to the first 10 lines lets change it to cat instead of head and make it act on all the genes in the file
+```bash
+cat ../prokka/contig_115/contig_115.tsv | awk -F '\t' '$5{OFS="\t";print $1,$5}' | grep -v '^locus'
+```
+we then send this output to file to be used an input in minpath
+```bash
+cat ../prokka/contig_115/contig_115.tsv | awk -F '\t' '$5{OFS="\t";print $1,$5}' | grep -v '^locus'> contig_115.ec
+```
+we then run minpath on this file
+```bash
+minpath -ec contig_115.ec -report contig_115.ec.report -details contig_115.ec.details
+```
+lets view the first 5 lines of contig_115.ec.report
+```bash
+head contig_115.ec.report
+```
+
+Now using our completed prokka output we can run minpath for all bins
+
+lets first prepare the minpath input for all bins
+```bash
+while read bin;do 
+  cat ../prokka/$bin/${bin}.tsv | awk -F '\t' '$5{printf("%s\t%s\n", $1,$5)}' | grep -v '^locus' > ${bin}.ec 
+done < ../checkm/bbd_topbins.txt
+```
+now we run minpath on every bin
+```bash
+while read bin;do 
+  minpath -ec ${bin}.ec -report ${bin}.ec.report -details ${bin}.ec.details
+done < ../checkm/bbd_topbins.txt
+```
+ since we are looking at the pathway for photosynthetic light reactions lets filter across the metacyc code PWY-101
+ ```bash
+ grep 'PWY-101' *.ec.report
+ ```
+ Question 4.1
+ How many bins contain at least one gene from this pathway?
+ ```bash
+ contig_115.ec.report:path PWY-101 any n/a  naive 1  minpath 0  fam0  4  fam-found  1  name  photosynthesis light reactions
+metabat.30.ec.report:path PWY-101 any n/a  naive 1  minpath 1  fam0  4  fam-found  4  name  photosynthesis light reactions
+metabat.54.ec.report:path PWY-101 any n/a  naive 1  minpath 0  fam0  4  fam-found  1  name  photosynthesis light reactions
+metabat.62.ec.report:path PWY-101 any n/a  naive 1  minpath 1  fam0  4  fam-found  1  name  photosynthesis light reactions
+metabat.67.ec.report:path PWY-101 any n/a  naive 1  minpath 0  fam0  4  fam-found  1  name  photosynthesis light reactions
+```
+5 bins
+
+Which bin has all of the genes (ie a complete pathway)?
+metabat.30 as there are 4 genes involved in the pathway and 4 genes were found
+
+find the taxonomy of the bin containing this pathway
+```bash
+grep 'metabat.30' ../gtdbtk/out/gtdbtk.bac120.summary.tsv
+```
+output:
+```bash
+d__Bacteria;p__Cyanobacteria;c__Cyanobacteriia;o__Cyanobacteriales;f__Desertifilaceae;g__Roseofilum;s__Roseofilum reptotaenium_A        GCA_001890975.1 95.0       d__Bacteria;p__Cyanobacteria;c__Cyanobacteriia;o__Cyanobacteriales;f__Desertifilaceae;g__Roseofilum;s__Roseofilum reptotaenium_A        96.72   0.869   GCA_001890975.1    95.0    d__Bacteria;p__Cyanobacteria;c__Cyanobacteriia;o__Cyanobacteriales;f__Desertifilaceae;g__Roseofilum;s__Roseofilum reptotaenium_A        96.72   0.869   d__Bacteria;p__Cyanobacteria;c__Cyanobacteriia;o__Cyanobacteriales;f__Desertifilaceae;g__Roseofilum;s__    taxonomic classification defined by topology and ANI    topological placement and ANI have congruent species assignments   GCA_002340255.1, s__Roseofilum sp002340255, 95.0, 94.21, 0.867  89.99   11      N/A     N/A
+```
+family:Desertifilaceae
+genus:Roseofilum
+species:Roseofilum reptotaenium_A
+
+viewing the gtdbtk summary tsv in R
+```{r}
+library(tidyverse)
+results <- read_tsv("gtdbtk/out/gtdbtk.bac120.summary.tsv")
+```
+
+lets now repeat this for the superpathway of tetrathionate reduction
+ ```bash
+ grep 'PWY-5360' *.ec.report
+ ```
+ output:
+ ```bash
+ metabat.71.ec.report:path PWY-5360 any n/a  naive 1  minpath 0  fam0  3  fam-found  1  name  superpathway of tetrathionate reduction (Salmonella typhimurium)
+ ```
+ How many bins contain the pathway PWY-5360?
+ 1
+ 
+ find the taxonomy of the bin containing this pathway
+```bash
+grep 'metabat.71' ../gtdbtk/out/gtdbtk.bac120.summary.tsv
+```
+output:
+```bash
+metabat.71      d__Bacteria;p__Campylobacterota;c__Campylobacteria;o__Campylobacterales;f__Arcobacteraceae;g__Halarcobacter;s__ N/A     N/A     N/A     N/A     N/A     N/AN/A     N/A     N/A     N/A     d__Bacteria;p__Campylobacterota;c__Campylobacteria;o__Campylobacterales;f__Arcobacteraceae;g__Halarcobacter;s__ ANI     classification based on placement in class-level tree      GCA_004116455.1, s__Halarcobacter sp004116455, 95.0, 81.38, 0.381; GCA_004118855.1, s__Halarcobacter sp004118855, 95.0, 80.71, 0.384; GCF_003346815.1, s__Halarcobacter bivalviorum, 95.0, 80.71, 0.406; GCA_001895145.1, s__Halarcobacter sp001895145, 95.0, 80.51, 0.403; GCF_005771535.1, s__Halarcobacter arenosus, 95.0, 80.5, 0.431; GCA_002869565.1, s__Halarcobacter sp002869565, 95.0, 80.37, 0.393; GCA_013373175.1, s__Halarcobacter sp013373175, 95.0, 80.3, 0.412; GCA_003252105.1, s__Halarcobacter sp003252105, 95.0, 79.87, 0.381; GCF_004116625.1, s__Halarcobacter mediterraneus, 95.0, 79.72, 0.374; GCF_013201825.1, s__Halarcobacter ebronensis, 95.0, 78.98, 0.343; GCF_006459125.1, s__Halarcobacter anaerophilus, 95.0, 78.79, 0.33 30.14   11      0.93462 N/A
+```
+ What family (in a taxonomic sense) do these bins belong to?
+ family: Arcobacteraceae
+ genus: Halarcobacter
