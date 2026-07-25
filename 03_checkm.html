@@ -8,7 +8,7 @@
 
 <meta name="author" content="Dhevin Fernando">
 
-<title>Assembly step</title>
+<title>CheckM</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,17 +59,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="01_assembly_files/libs/clipboard/clipboard.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/popper.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/anchor.min.js"></script>
-<link href="01_assembly_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="01_assembly_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="01_assembly_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="01_assembly_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="01_assembly_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="03_checkm_files/libs/clipboard/clipboard.min.js"></script>
+<script src="03_checkm_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="03_checkm_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="03_checkm_files/libs/quarto-html/popper.min.js"></script>
+<script src="03_checkm_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="03_checkm_files/libs/quarto-html/anchor.min.js"></script>
+<link href="03_checkm_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="03_checkm_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="03_checkm_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="03_checkm_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="03_checkm_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assembly step</h1>
+<h1 class="title">CheckM</h1>
 </div>
 
 
@@ -105,27 +105,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="assembly" class="level2">
-<h2 class="anchored" data-anchor-id="assembly">Assembly</h2>
-<p>first i created two directories within my project, flye and raw_data and changed my working directory to raw_data</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> flye</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> raw_data</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then created a symbolic link to the black band disease genome read data</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /pvol/data/metagenome_assembly/bbd_0.1.fastq.gz .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then changed the working directory to flye and ran a shell slurm script (run_flye_bbd.sh) with the following code to assemble the black band disease genome:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=720</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=12 --mem=10gb</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">flye</span> <span class="at">--nano-hq</span> ../raw_data/bbd_0.1.fastq.gz <span class="at">--threads</span> 12 <span class="at">--out-dir</span> bbd <span class="at">--meta</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Finished flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> flye</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_flye_bbd.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="checkm" class="level2">
+<h2 class="anchored" data-anchor-id="checkm">Checkm</h2>
+<p>cd to my top level for the project</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/marine-genomics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>make and change to a checkm directory</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> checkm</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> checkm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>to identify the longest contig in the assembly we run the following command which orders them from shortest to longest:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> ../flye/bbd/assembly.fasta <span class="kw">|</span> <span class="ex">bioawk</span> <span class="at">-c</span> fastx <span class="st">'{print length($seq),$name}'</span> <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>now we manually add the largest contig (contig_115) to checkm</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> bins_bbd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ../metabat/bins_bbd/<span class="pp">*</span>.fa bins_bbd/</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">samtools</span> faidx ../flye/bbd/assembly.fasta contig_115 <span class="op">&gt;</span> bins_bbd/contig_115.fa</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>we then create a new shell slurm script with the following code (run_checkm_bbd.sh) and run it to submit a checkm job:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=60</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=6 --mem=40gb</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting checkm in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="bu">shopt</span> <span class="at">-s</span> expand_aliases</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> checkm=<span class="st">'apptainer run -B /pvol/:/pvol /pvol/data/sif/checkm.sif checkm'</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ex">checkm</span> lineage_wf bins_bbd out <span class="at">-t</span> 4 <span class="at">-x</span> fa <span class="at">-f</span> checkm_results_bbd.txt</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Finished checkm in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>the job is then submitted with the following command</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_checkm_bbd.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 </main>

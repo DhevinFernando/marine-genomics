@@ -8,7 +8,7 @@
 
 <meta name="author" content="Dhevin Fernando">
 
-<title>Assembly step</title>
+<title>GTDBTK</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,17 +59,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="01_assembly_files/libs/clipboard/clipboard.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/popper.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/anchor.min.js"></script>
-<link href="01_assembly_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="01_assembly_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="01_assembly_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="01_assembly_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="01_assembly_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="05_gtdbtk_files/libs/clipboard/clipboard.min.js"></script>
+<script src="05_gtdbtk_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="05_gtdbtk_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="05_gtdbtk_files/libs/quarto-html/popper.min.js"></script>
+<script src="05_gtdbtk_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="05_gtdbtk_files/libs/quarto-html/anchor.min.js"></script>
+<link href="05_gtdbtk_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="05_gtdbtk_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="05_gtdbtk_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="05_gtdbtk_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="05_gtdbtk_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assembly step</h1>
+<h1 class="title">GTDBTK</h1>
 </div>
 
 
@@ -105,27 +105,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="assembly" class="level2">
-<h2 class="anchored" data-anchor-id="assembly">Assembly</h2>
-<p>first i created two directories within my project, flye and raw_data and changed my working directory to raw_data</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> flye</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> raw_data</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then created a symbolic link to the black band disease genome read data</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /pvol/data/metagenome_assembly/bbd_0.1.fastq.gz .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then changed the working directory to flye and ran a shell slurm script (run_flye_bbd.sh) with the following code to assemble the black band disease genome:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=720</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=12 --mem=10gb</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">flye</span> <span class="at">--nano-hq</span> ../raw_data/bbd_0.1.fastq.gz <span class="at">--threads</span> 12 <span class="at">--out-dir</span> bbd <span class="at">--meta</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Finished flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> flye</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_flye_bbd.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="perform-taxonomic-classification-with-gtdbtk" class="level2">
+<h2 class="anchored" data-anchor-id="perform-taxonomic-classification-with-gtdbtk"><strong>Perform taxonomic classification with gtdbtk</strong></h2>
+<p>create a directory for gtdbtk and create a directory called genomes within it</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> gtdbtk</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> gtdbtk</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> genomes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>this command will copy a file corresponding to each bin for each of the top bins into the genomes folder</p>
+<p>first construct a while loop</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">bin</span><span class="kw">;</span><span class="cf">do</span> <span class="bu">echo</span> <span class="va">$bin</span><span class="kw">;</span><span class="cf">done</span> <span class="op">&lt;</span> ../checkm/bbd_topbins.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>for every bin we need to prepend the path to its folder ../metabat/bins_bbd/ and then append the file extension .fa with the following command contig 115 had to be copied manually</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">bin</span><span class="kw">;</span><span class="cf">do</span> <span class="bu">echo</span> <span class="st">"../metabat/bins_bbd/</span><span class="va">${bin}</span><span class="st">.fa"</span><span class="kw">;</span><span class="cf">done</span> <span class="op">&lt;</span> ../checkm/bbd_topbins.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>now we copy</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">bin</span><span class="kw">;</span><span class="cf">do</span> <span class="fu">cp</span> <span class="st">"../metabat/bins_bbd/</span><span class="va">${bin}</span><span class="st">.fa"</span> genomes<span class="kw">;</span><span class="cf">done</span> <span class="op">&lt;</span> ../checkm/bbd_topbins.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>check whether it worked</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> genomes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>create a slurm shell file within gtdbtk directory</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=60</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=2 --mem=40gb</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting gtdbtk in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">shopt</span> <span class="at">-s</span> expand_aliases</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> gtdbtk=<span class="st">'apptainer run -B /pvol:/pvol,/pvol/data/mg/gtdbtkdata/release207_v2/:/refdata /pvol/data/sif/gtdbtk.sif'</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ex">gtdbtk</span> classify_wf <span class="at">-x</span> fa <span class="at">--cpus</span> 2 <span class="at">--genome_dir</span> genomes <span class="at">--out_dir</span> out <span class="at">--skip_ani_screen</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Finished gtdbtk in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and then submit a job</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_gtdbtk.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 </main>

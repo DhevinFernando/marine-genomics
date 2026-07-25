@@ -8,7 +8,7 @@
 
 <meta name="author" content="Dhevin Fernando">
 
-<title>Assembly step</title>
+<title>Bin selection</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,17 +59,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="01_assembly_files/libs/clipboard/clipboard.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="01_assembly_files/libs/quarto-html/popper.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="01_assembly_files/libs/quarto-html/anchor.min.js"></script>
-<link href="01_assembly_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="01_assembly_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="01_assembly_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="01_assembly_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="01_assembly_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="04_binselection_files/libs/clipboard/clipboard.min.js"></script>
+<script src="04_binselection_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="04_binselection_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="04_binselection_files/libs/quarto-html/popper.min.js"></script>
+<script src="04_binselection_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="04_binselection_files/libs/quarto-html/anchor.min.js"></script>
+<link href="04_binselection_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="04_binselection_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="04_binselection_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="04_binselection_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="04_binselection_files/libs/bootstrap/bootstrap-547d8881d88612430a2cfac5ecb41a19.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assembly step</h1>
+<h1 class="title">Bin selection</h1>
 </div>
 
 
@@ -105,27 +105,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="assembly" class="level2">
-<h2 class="anchored" data-anchor-id="assembly">Assembly</h2>
-<p>first i created two directories within my project, flye and raw_data and changed my working directory to raw_data</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> flye</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> raw_data</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then created a symbolic link to the black band disease genome read data</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /pvol/data/metagenome_assembly/bbd_0.1.fastq.gz .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>i then changed the working directory to flye and ran a shell slurm script (run_flye_bbd.sh) with the following code to assemble the black band disease genome:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=720</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=12 --mem=10gb</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Starting flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">flye</span> <span class="at">--nano-hq</span> ../raw_data/bbd_0.1.fastq.gz <span class="at">--threads</span> 12 <span class="at">--out-dir</span> bbd <span class="at">--meta</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Finished flye bbd in </span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st"> at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> flye</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_flye_bbd.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="select-bins-based-on-checkm-results" class="level2">
+<h2 class="anchored" data-anchor-id="select-bins-based-on-checkm-results">Select bins based on checkm results</h2>
+<p>channge directory to checkm folder</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> checkm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>view the checkm_results_bbd.txt file</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> checkm_results_bbd.txt </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>show more lines with</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-n</span> 20 checkm_results_bbd.txt </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>I am now going to extract the bins with a completeness greater than 15%</p>
+<p>this command will printn the lines where the 13th column has a value greater than 15</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> checkm_results_bbd.txt <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$13&gt;15'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>lets extract the bin IDs for this selection with the following command</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> checkm_results_bbd.txt <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$13&gt;15{print $1}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>this extraction will then be output to a file</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> checkm_results_bbd.txt <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'$13&gt;15{print $1}'</span> <span class="op">&gt;</span> bbd_topbins.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 </main>
