@@ -1,0 +1,42 @@
+---
+title: "Assembly"
+author: "Dhevin Fernando"
+format: html
+editor: visual
+---
+
+## Assembly
+
+first i created two directories within my project, flye and raw_data and changed my working directory to raw_data
+
+``` bash
+mkdir flye
+mkdir raw_data
+cd raw_data
+```
+
+i then created a symbolic link to the black band disease genome read data
+
+``` bash
+ln -s /pvol/data/metagenome_assembly/bbd_0.1.fastq.gz .
+```
+
+i then changed the working directory to flye and ran a shell slurm script (run_flye_bbd.sh) with the following code to assemble the black band disease genome:
+
+``` bash
+#!/bin/bash
+#SBATCH --time=720
+#SBATCH --ntasks=12 --mem=10gb
+
+echo "Starting flye bbd in $(pwd) at $(date)"
+
+flye --nano-hq ../raw_data/bbd_0.1.fastq.gz --threads 12 --out-dir bbd --meta
+
+echo "Finished flye bbd in $(pwd) at $(date)"
+```
+
+``` bash
+cd ..
+cd flye
+sbatch run_flye_bbd.sh
+```
